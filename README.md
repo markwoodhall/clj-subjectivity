@@ -23,12 +23,16 @@ This will return a map similar to:
  :positive 0,
  :top-negative '("fire"),
  :top-neutral '(),
- :top-positive '()}
+ :top-positive '()
+ :bottom-negative '("fire")
+ :bottom-neutral '()
+ :bottom-positive '()}
 ```
 
 `positive`, `negative`, and `neutral` are counts of the respective word types.
 `difference` is the `positive` count minus the `negative` count.
 `top-nagative`, `top-positive`, and `top-neutral` are the most frequently occuring words for the respective work type.
+`bottom-nagative`, `bottom--positive`, and `bottom-neutral` are the least frequently occuring words for the respective work type.
 
 ## License
 

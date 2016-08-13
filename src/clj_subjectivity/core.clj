@@ -39,7 +39,10 @@
     {:positive pos
      :negative neg
      :neutral neu
-     :top-positive (distinct (concat p-frequent p-rare))
-     :top-negative (distinct (concat n-frequent n-rare))
-     :top-neutral  (distinct (concat neu-frequent neu-rare))
+     :top-positive (distinct p-frequent)
+     :top-negative (distinct n-frequent)
+     :top-neutral  (distinct neu-frequent)
+     :bottom-positive (distinct p-rare)
+     :bottom-negative (distinct n-rare)
+     :bottom-neutral  (distinct neu-rare)
      :difference (- pos neg)}))
