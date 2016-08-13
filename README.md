@@ -1,6 +1,6 @@
 # clj-subjectivity
 
-A Clojure library designed to ... well, that part is up to you.
+A Clojure wrapper around a subjectivity lexicon [from here](http://mpqa.cs.pitt.edu/)
 
 ## Status
 
@@ -8,7 +8,27 @@ A Clojure library designed to ... well, that part is up to you.
 
 ## Usage
 
-FIXME
+Pass a sequence of words to the `sentiment` function like so:
+
+```clojure
+(sentiment ["fire"])
+```
+
+This will return a map similar to:
+
+```clojure
+{:difference -0.5,
+ :negative 0.5,
+ :neutral 0,
+ :positive 0,
+ :top-negative '("fire"),
+ :top-neutral '(),
+ :top-positive '()}
+```
+
+`positive`, `negative`, and `neutral` are counts of the respective word types.
+`difference` is the `positive` count minus the `negative` count.
+`top-nagative`, `top-positive`, and `top-neutral` are the most frequently occuring words for the respective work type.
 
 ## License
 
