@@ -2,6 +2,8 @@
 
 A Clojure wrapper around a subjectivity lexicon [from here](http://mpqa.cs.pitt.edu/)
 
+- [API Docs](http://markwoodhall.github.io/clj-subjectivity)
+
 ## Status
 
 [![Build Status](https://api.travis-ci.org/markwoodhall/clj-subjectivity.svg?branch=master)](https://api.travis-ci.org/repositories/markwoodhall/clj-subjectivity)

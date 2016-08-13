@@ -1,4 +1,5 @@
 (ns clj-subjectivity.core
+  "A Clojure wrapper around a subjectivity lexicon [from here](http://mpqa.cs.pitt.edu/)"
   {:author "Mark Woodhall"}
   (:require [clojure.java.io :as io]))
 
@@ -18,6 +19,7 @@
      :word word}))
 
 (defn sentiment
+  "Given a collection of words returns a map representing the overall sentiment for the words."
   [words]
   (let [sentiments (map word-sentiment words)
         pos-sents (filter #(= (:sentiment %) :positive) sentiments)
