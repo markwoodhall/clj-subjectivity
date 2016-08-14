@@ -18,6 +18,9 @@
               0)
      :word word}))
 
+(def word-sentiment-memo
+  (memoize word-sentiment))
+
 (defn sentiment
   "Given a collection of words or a function returning a collection of words will
   return a map representing the overall sentiment for the words."
@@ -25,11 +28,10 @@
   (let [words (if (fn? words-or-func)
                 (words-or-func)
                 words-or-func)
-        sentiments (map word-sentiment words)
+        sentiments (map word-sentiment-memo words)
         pos-sents (filter #(= (:sentiment %) :positive) sentiments)
         neg-sents (filter #(= (:sentiment %) :negative) sentiments)
-        neu-sents (filter #(or (= (:sentiment %) :neutral)
-                               (nil? (:sentiment %))) sentiments)
+        neu-sents (filter #(= (:sentiment %) :neutral) sentiments)
         pos (reduce + (map #(:score %) pos-sents))
         neg (reduce + (map #(:score %) neg-sents))
         neu (reduce + (map #(:score %) neu-sents))
