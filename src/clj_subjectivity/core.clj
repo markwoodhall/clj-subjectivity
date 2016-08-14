@@ -19,9 +19,13 @@
      :word word}))
 
 (defn sentiment
-  "Given a collection of words returns a map representing the overall sentiment for the words."
-  [words]
-  (let [sentiments (map word-sentiment words)
+  "Given a collection of words or a function returning a collection of words will
+  return a map representing the overall sentiment for the words."
+  [words-or-func]
+  (let [words (if (fn? words-or-func)
+                (words-or-func)
+                words-or-func)
+        sentiments (map word-sentiment words)
         pos-sents (filter #(= (:sentiment %) :positive) sentiments)
         neg-sents (filter #(= (:sentiment %) :negative) sentiments)
         neu-sents (filter #(or (= (:sentiment %) :neutral)

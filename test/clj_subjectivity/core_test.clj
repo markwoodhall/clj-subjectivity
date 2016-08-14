@@ -3,6 +3,20 @@
             [clj-subjectivity.core :refer [sentiment]]))
 
 (deftest sentiment-test
+  (testing "test sentiment with weak negative word as func returns correct result."
+    (let [expected {:difference -0.5
+                    :negative 0.5
+                    :neutral 0
+                    :positive 0
+                    :top-negative '("fire")
+                    :top-neutral '()
+                    :top-positive '()
+                    :bottom-negative '("fire")
+                    :bottom-neutral '()
+                    :bottom-positive '()}
+          actual (sentiment (fn [] ["fire"]))]
+      (is (= expected actual))))
+
   (testing "test sentiment with weak negative word returns correct result."
     (let [expected {:difference -0.5
                     :negative 0.5
