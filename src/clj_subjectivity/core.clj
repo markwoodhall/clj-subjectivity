@@ -1,25 +1,46 @@
 (ns clj-subjectivity.core
   "A Clojure wrapper around a subjectivity lexicon [from here](http://mpqa.cs.pitt.edu/)"
   {:author "Mark Woodhall"}
-  (:require [clojure.java.io :as io]))
+  (:require [clojure.java.io :as io]
+            [clojure.string :refer [lower-case]]))
 
 (def subjectivity-clues
   (memoize #(read-string
              (slurp (io/resource "subjectivityclues.edn")))))
 
-(defn- word-sentiment
-  [word]
-  (let [{:keys [priorpolarity type]} (first (filter #(= (:word1 %) word) (subjectivity-clues)))]
-    {:sentiment priorpolarity
-     :score (if (not (nil? priorpolarity))
-              (if (= type :strongsubj)
-                1
-                0.5)
-              0)
-     :word word}))
+(def negations
+  (memoize #(read-string
+             (slurp (io/resource "negations.edn")))))
 
-(def word-sentiment-memo
+(defn- word-sentiment
+  ([word]
+   (word-sentiment word false))
+  ([word negate?]
+     (let [{:keys [priorpolarity type]} (first (filter #(= (:word1 %) word) (subjectivity-clues)))]
+       {:sentiment (if (and (= priorpolarity :positive)
+                            negate?)
+                     :negative
+                     priorpolarity)
+        :score (if (not (nil? priorpolarity))
+                 (if (= type :strongsubj)
+                   1
+                   0.5)
+                 0)
+        :word word})))
+
+(def ^:private word-sentiment-memo
   (memoize word-sentiment))
+
+(defn- words-sentiment
+  [words]
+  (let [words (if (even? (count words))
+                words
+                (conj words ""))]
+    (flatten (for [[w1 w2] (partition 2 words)]
+      [(word-sentiment-memo w1) (word-sentiment-memo w2 (some #{(lower-case w1)} (negations)))]))))
+
+(def ^:private words-sentiment-memo
+  (memoize words-sentiment))
 
 (defn sentiment
   "Given a collection of words or a function returning a collection of words will
@@ -28,7 +49,7 @@
   (let [words (if (fn? words-or-func)
                 (words-or-func)
                 words-or-func)
-        sentiments (map word-sentiment-memo words)
+        sentiments (words-sentiment-memo words)
         pos-sents (filter #(= (:sentiment %) :positive) sentiments)
         neg-sents (filter #(= (:sentiment %) :negative) sentiments)
         neu-sents (filter #(= (:sentiment %) :neutral) sentiments)
