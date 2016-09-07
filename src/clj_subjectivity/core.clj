@@ -39,9 +39,6 @@
     (flatten (for [[w1 w2] (partition 2 words)]
       [(word-sentiment-memo w1) (word-sentiment-memo w2 (some #{(lower-case w1)} (negations)))]))))
 
-(def ^:private words-sentiment-memo
-  (memoize words-sentiment))
-
 (defn sentiment
   "Given a collection of words or a function returning a collection of words will
   return a map representing the overall sentiment for the words."
@@ -49,7 +46,7 @@
   (let [words (if (fn? words-or-func)
                 (words-or-func)
                 words-or-func)
-        sentiments (words-sentiment-memo words)
+        sentiments (words-sentiment words)
         pos-sents (filter #(= (:sentiment %) :positive) sentiments)
         neg-sents (filter #(= (:sentiment %) :negative) sentiments)
         neu-sents (filter #(= (:sentiment %) :neutral) sentiments)
