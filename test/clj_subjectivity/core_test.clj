@@ -89,6 +89,22 @@
 
         (is (= expected actual) (str negation " should negate a positive word. e.g Not happy should reverse the positive sentiment of happy.")))))
 
+  (testing "test sentiment with positive word negated in chain of words returns correct result."
+    (doseq [negation ["not" "never"]]
+      (let [expected {:difference -2
+                      :negative 2
+                      :neutral 0
+                      :positive 0
+                      :top-negative '("happy" "sad")
+                      :top-neutral '()
+                      :top-positive '()
+                      :bottom-negative '("sad" "happy")
+                      :bottom-neutral '()
+                      :bottom-positive '()}
+            actual (sentiment ["sad" negation "happy"])]
+
+        (is (= expected actual) (str negation " should negate a positive word. e.g Not happy should reverse the positive sentiment of happy.")))))
+
   (testing "test sentiment with negative word negated has no effect and returns correct result."
     (doseq [negation ["not" "never"]]
       (let [expected {:difference -1
