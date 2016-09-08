@@ -1,4 +1,4 @@
-(defproject clj-subjectivity "0.5.0"
+(defproject clj-subjectivity "0.6.0"
   :description "Library wrapping the subjectivity lexicon from http://mpqa.cs.pitt.edu/"
   :url "https://github.com/markwoodhall/clj-subjectivity"
   :license {:name "The MIT License."
