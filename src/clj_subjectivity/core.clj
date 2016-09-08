@@ -28,13 +28,16 @@
                  0)
         :word word})))
 
+(def ^:private word-sentiment-memo
+  (memoize word-sentiment))
+
 (defn- words-sentiment
   [words]
   (let [last-word (atom "")]
     (for [word words]
       (let [negate? (some #{(lower-case @last-word)} (negations))]
         (reset! last-word word)
-        (word-sentiment word negate?)))))
+        (word-sentiment-memo word negate?)))))
 
 (defn sentiment
   "Given a collection of words or a function returning a collection of words will
