@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.7.0] - 2016-09-08
+
+- memoize individual word sentiment.
+
 ## [0.6.0] - 2016-09-08
 
 - Don't memoize individual word sentiment.
