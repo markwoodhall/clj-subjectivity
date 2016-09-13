@@ -1,5 +1,10 @@
 # Change Log
 
+## [0.8.0] - 2016-09-13
+
+- Support calculating sentiment for string sentences as well as collections of string.
+- "Boost" scores for sequential positive/negative words.
+
 ## [0.7.0] - 2016-09-08
 
 - memoize individual word sentiment.
