@@ -2,7 +2,7 @@
   "A Clojure wrapper around a subjectivity lexicon [from here](http://mpqa.cs.pitt.edu/)"
   {:author "Mark Woodhall"}
   (:require [clojure.java.io :as io]
-            [clojure.string :refer [lower-case]]))
+            [clojure.string :refer [split lower-case]]))
 
 (def subjectivity-clues
   (memoize #(read-string
@@ -16,16 +16,17 @@
   ([word]
    (word-sentiment word false))
   ([word negate?]
-     (let [{:keys [priorpolarity type]} (first (filter #(= (:word1 %) word) (subjectivity-clues)))]
+     (let [{:keys [priorpolarity type]} (first (filter #(= (:word1 %) word) (subjectivity-clues)))
+           score (if (not (nil? priorpolarity))
+                   (if (= type :strongsubj)
+                     1
+                     0.5)
+                   0)]
        {:sentiment (if (and (= priorpolarity :positive)
                             negate?)
                      :negative
                      priorpolarity)
-        :score (if (not (nil? priorpolarity))
-                 (if (= type :strongsubj)
-                   1
-                   0.5)
-                 0)
+        :score score
         :word word})))
 
 (def ^:private word-sentiment-memo
@@ -33,11 +34,15 @@
 
 (defn- words-sentiment
   [words]
-  (let [last-word (atom "")]
+  (let [last-sentiment (atom {:word ""})]
     (for [word words]
-      (let [negate? (some #{(lower-case @last-word)} (negations))]
-        (reset! last-word word)
-        (word-sentiment-memo word negate?)))))
+      (let [negate? (some #{(lower-case (:word @last-sentiment))} (negations))
+            sentiment (word-sentiment-memo word negate?)
+            sentiment (if (= (:sentiment @last-sentiment) (:sentiment sentiment))
+                        (update-in sentiment [:score] + 0.5)
+                        sentiment)]
+        (reset! last-sentiment sentiment)
+        sentiment))))
 
 (defn sentiment
   "Given a collection of words or a function returning a collection of words will
@@ -46,6 +51,9 @@
   (let [words (if (fn? words-or-func)
                 (words-or-func)
                 words-or-func)
+        words (if (sequential? words)
+                words
+                (split words #"\ "))
         sentiments (words-sentiment words)
         pos-sents (filter #(= (:sentiment %) :positive) sentiments)
         neg-sents (filter #(= (:sentiment %) :negative) sentiments)

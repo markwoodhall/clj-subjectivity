@@ -121,7 +121,7 @@
 
         (is (= expected actual) (str negation " should not have any effect on a word already considered to have negative sentiment.")))))
 
-  (testing "test sentiment with a selection of words."
+  (testing "test sentiment with a collection of words."
     (let [expected {:difference 0.0
                     :negative 1.5
                     :neutral 0
@@ -132,5 +132,47 @@
                     :bottom-negative '("fire" "filthy")
                     :bottom-neutral '()
                     :bottom-positive '("happy" "fine")}
-          actual (sentiment ["happy" "fine" "fire" "filthy"])]
+          actual (sentiment ["happy" "fire" "fine" "filthy"])]
+      (is (= expected actual))))
+
+  (testing "test sentiment with a sequence of positive words increments each sequential word by an additional .5."
+      (let [expected {:difference 3.5
+                      :negative 0
+                      :neutral 0
+                      :positive 3.5
+                      :top-negative '()
+                      :top-neutral '()
+                      :top-positive '("dreams" "happy" "love")
+                      :bottom-negative '()
+                      :bottom-neutral '()
+                      :bottom-positive '("love" "happy" "dreams")}
+            actual (sentiment "Mark love happy dreams")]
+        (is (= expected actual))))
+
+  (testing "test sentiment with a sequence of negative words increments each sequential word by an additional .5."
+      (let [expected {:difference -4.0
+                      :negative 4.0
+                      :neutral 0
+                      :positive 0
+                      :top-negative '("hate" "fear" "anger")
+                      :top-neutral '()
+                      :top-positive '()
+                      :bottom-negative '("anger" "fear" "hate")
+                      :bottom-neutral '()
+                      :bottom-positive '()}
+            actual (sentiment "anger fear hate")]
+        (is (= expected actual))))
+
+  (testing "test sentiment with a sentence."
+    (let [expected {:difference -0.5
+                    :negative 0.5
+                    :neutral 0
+                    :positive 0
+                    :top-negative '("fall")
+                    :top-neutral '()
+                    :top-positive '()
+                    :bottom-negative '("fall")
+                    :bottom-neutral '()
+                    :bottom-positive '()}
+          actual (sentiment "Sgt Emile Cilliers charged over wife's parachute fall")]
       (is (= expected actual)))))
