@@ -17,7 +17,7 @@
    (word-sentiment word false))
   ([word negate?]
      (let [{:keys [priorpolarity type]} (first (filter #(= (:word1 %) word) (subjectivity-clues)))
-           score (if (not (nil? priorpolarity))
+           score (if-not (nil? priorpolarity)
                    (if (= type :strongsubj)
                      1
                      0.5)
